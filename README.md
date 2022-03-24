@@ -4,6 +4,8 @@ This repository provides scripts for generating a user-friendly, browser-based
 catalog from a hierarchy of (distributed) DataLad datasets. It uses the functionality
 of DataLad and several DataLad extensions.
 
+It was inspired by the [FAIRly big processing workflow](https://github.com/psychoinformatics-de/fairly-big-processing-workflow), which was also built using DataLad.
+
 
 
 ## Workflow options
