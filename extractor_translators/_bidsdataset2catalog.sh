@@ -21,7 +21,7 @@ name=$(jq '.Name' <<< $EXTRACTED)
 short_name=""
 # description(.tags | join(","))
 # description=$(jq -c '.description' <<< $EXTRACTED)
-description=$(jq -c '.description | join("\n\n")' <<< $EXTRACTED | jq -R . )
+description=$(jq -c '.description | join("\n\n")' <<< $EXTRACTED | sed -e 's/\\"//g' | sed 's:\\\([^n]\):\1:g' )
 # doi
 doi=""
 # url
@@ -53,7 +53,7 @@ final=$(jq -c -n --argjson type "$type" \
 --argjson dataset_version "$dataset_version" \
 --argjson name "$name" \
 --arg short_name "$short_name" \
---argjson description "$description" \
+--arg description $description \
 --arg doi "$doi" \
 --arg url "$url" \
 --argjson license "$license" \
