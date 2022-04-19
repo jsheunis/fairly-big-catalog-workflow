@@ -161,3 +161,6 @@ local/local_run_main.sh $SUPER_PATH $OUTDIR $CATALOGDIR
 
 ### Distributed:
 *to be completed*
+
+## Practical example
+Using the StudyForrest dataset... *to be completed*
