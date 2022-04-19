@@ -1,27 +1,96 @@
+## --- UNDER DEVELOPMENT ---
+*This repository is undergoing continuous development and all branches should
+be considered unstable*
+
+---
+
 # FAIRly Big Catalog Workflow
 
 This repository provides scripts for generating a user-friendly, browser-based
-catalog from a hierarchy of (distributed) DataLad datasets. It uses the functionality
-of DataLad and several DataLad extensions.
+catalog from a set of (distributed) DataLad datasets. It uses the functionality
+of [Datalad](https://www.datalad.org/) and several DataLad extensions, mainly
+[datalad-metalad](https://github.com/datalad/datalad-metalad) and [datalad-catalog](https://github.com/datalad/datalad-catalog).
 
 It was inspired by the [FAIRly big processing workflow](https://github.com/psychoinformatics-de/fairly-big-processing-workflow), which was also built using DataLad.
 
-
-
-## Workflow options
-
-### Local
-*to be completed*
-
-### Distributed
-*to be completed*
+See an original description of the idea [in this issue](https://github.com/datalad/datalad-catalog/issues/36).
 
 
 ## Workflow description
 
-*to be completed*
+This workflow is designed to run
+1. metadata extraction,
+2. translation of extracted metadata into compatible structures,
+3. and adding translated metadata to a data catalog,
 
-## Install dependencies
+all as part of a distributed and automated workflow on linked datasets.
+
+The workflow has two variants: distributed and local.
+
+### Distributed
+
+*\*not functional yet - to be completed\**
+
+The distributed worklfow is designed to run on computing infrastructure and
+under the direction of a workflow manager such as HTCondor or SLURM. It supports
+distributed catalog generation in the sense that: 
+- A single job can orchestrate the creation of a catalog, and can kick off the procedure
+to add an arbitrary number of datasets to the catalog
+- Procedures run on individual datasets are run by individual, parallelized jobs
+- After completion of distributed jobs, these additions can be made part of the whole
+via an octopus-merge.
+
+The technical design is as follows:
+```
+Main job:
+- clone superdataset
+- create catalog
+- catalog set super
+- extract dataset+file metadata of superdataset
+- translate and add superdataset metadata to catalog
+- save catalog as a datalad dataset (which config? text2git?)
+- start per-subdataset jobs in parallel (by accessing subdatasets)
+
+Per-dataset job (args: subdataset, catalog):
+- clone subdataset
+- extract dataset/file metadata
+- translate metadata to catalog schema
+- clone catalog, check out subdataset-specific branch
+- add metadata to catalog
+- commit to subdataset-specific branch
+- push to origin/upstream
+
+Main job (continue once subdataset jobs completed):
+- merge all branches into master (no conflicts since subdataset jobs only added new content to seperate locations)
+- push catalog to server
+```
+
+### Local
+
+This is currently the only functional variant of the workflow. The design
+mirrors the functioning of the distributed variant except:
+- the superdataset and subdatasets are cloned locally beforehand
+- the job is run by the user (i.e. without a job scheduler)
+- parallalized jobs are executed in a loop
+
+This variant is intended for local testing or generation of catalogs from small
+and locally available datasets that won't require large computing resources.
+
+
+### Extractor translators
+
+An integral part of this workflow includes translating extracted metadata to
+the format expected by `datalad-catalog`'s schema. For this purpose, the subdirectory
+`extractor_translators/` contains several shell scripts to translate metadata between
+known structures: always from the format that is output by the particular extractor and
+`datalad-metalad` into the format expected by the catalog. Mostly, these scripts make
+extensive use of `jq`, but this is not a hard requirement.
+
+Developers aiming to make use of this workflow will have to ensure that a translator
+script exists that is compatible with their extracted metadata and `datalad-catalog`.
+
+
+## Installation
 
 First install DataLad by following [these instructions](https://www.datalad.org/#install).
 
