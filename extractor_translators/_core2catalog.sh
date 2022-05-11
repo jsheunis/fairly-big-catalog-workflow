@@ -19,6 +19,7 @@ extractors_used=$(jq '[{"extractor_name": .extractor_name, "extractor_version": 
 type=$(jq .type <<< $METADATA)
 # strip quotes from type
 ttype=$(echo "$type" | xargs)
+# echo "$ttype"
 # The rest depends on the type of core extractor: dataset or file
 if [[ ${ttype} == "dataset" ]]; then
     # dataset

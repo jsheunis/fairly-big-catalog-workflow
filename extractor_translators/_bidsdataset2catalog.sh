@@ -21,7 +21,12 @@ name=$(jq '.Name' <<< $EXTRACTED)
 short_name=""
 # description(.tags | join(","))
 # description=$(jq -c '.description' <<< $EXTRACTED)
-description=$(jq -c '.description | join("\n\n")' <<< $EXTRACTED | sed -e 's/\\"//g' | sed 's:\\\([^n]\):\1:g' )
+description=$(jq -c '.description' <<< $EXTRACTED)
+if [[ ${description} == "null" ]] ||  [ -z "$description" ]; then
+    description=""
+else
+    description=$(jq -c '.description | join("\n\n")' <<< $EXTRACTED | sed -e 's/\\"//g' | sed 's:\\\([^n]\):\1:g' )
+fi
 # doi
 doi=""
 # url
@@ -41,6 +46,7 @@ subdatasets="[]"
 # children
 children="[]"
 # extractors_used
+
 extractors_used=$(jq '[{"extractor_name": .extractor_name, "extractor_version": .extractor_version, "extraction_parameter": .extraction_parameter, "extraction_time": .extraction_time, "agent_name": .agent_name, "agent_email": .agent_email}]'<<< $METADATA )
 # additional_display
 additional_display=$(jq '[{"name": "BIDS", "content": .entities}]' <<< $EXTRACTED)
@@ -53,7 +59,7 @@ final=$(jq -c -n --argjson type "$type" \
 --argjson dataset_version "$dataset_version" \
 --argjson name "$name" \
 --arg short_name "$short_name" \
---arg description $description \
+--arg description "$description" \
 --arg doi "$doi" \
 --arg url "$url" \
 --argjson license "$license" \
