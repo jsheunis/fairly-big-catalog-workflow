@@ -9,6 +9,9 @@ SUPER_PATH=$1
 SUPER_NAME=$(basename "$SUPER_PATH")
 OUTDIR=$2
 CATALOGDIR=$3
+# CREATE OUTPUTDIR IF IT DOES NOT EXIST
+mkdir -p $OUTDIR
+
 SUPER_METADATA_FILE="$OUTDIR/metadata_000_SUPER.jsonl"
 SUBDATASETS_FILE="$OUTDIR/subds.txt"
 datalad subdatasets -d $SUPER_PATH > $SUBDATASETS_FILE
@@ -35,7 +38,6 @@ echo "      $SUPER_METADATA_FILE"
 # CLONE AND DUPLICATE SUPER DATASET (pass duplicate to subdataset tasks to clone from)
 # datalad clone SUPER_URL super_dataset
 # cd super_dataset
-
 
 # CREATE CATALOG
 datalad catalog create -f -c $CATALOGDIR
