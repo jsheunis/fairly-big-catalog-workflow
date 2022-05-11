@@ -76,6 +76,10 @@ mirrors the functioning of the distributed variant except:
 This variant is intended for local testing or generation of catalogs from small
 and locally available datasets that won't require large computing resources.
 
+The local variant also allows for generating a catalog from already extracted
+metadata, by skipping the first of the three steps listed in the workflow
+description above.
+
 
 ### Extractor translators
 
@@ -158,6 +162,15 @@ Then `cd` to the root directory of this repository, and run the main script:
 chmod -R u+rwx 
 local/local_run_main.sh $SUPER_PATH $OUTDIR $CATALOGDIR
 ```
+
+If you want to generate a new catalog from already extracted metadata, you can
+use the script that only translates (instead of extracts and translates):
+
+```bash
+CATALOGDIR="directory-where-new-catalog-is-created"
+local/local_run_main_translate_only.sh $SUPER_PATH $OUTDIR $CATALOGDIR
+```
+
 
 ### Distributed:
 *to be completed*
