@@ -25,6 +25,11 @@ CATALOG_DIR=$3
 /bin/zsh $BASEDIR/local_extract_datasetlevel.sh $DATASET_PATH $OUTFILE
 
 # EXTRACT FILE METADATA OF CURRENT DATASET
+filecount=$(find "$DATASET_PATH" ! -path "$DATASET_PATH/.*" ! -name '.*' ! -type d | wc -l)
+echo "Number of files: $filecount"
+if (( $filecount < 2000 )); then
+    /bin/zsh $BASEDIR/local_extract_filelevel.sh $DATASET_PATH $OUTFILE
+fi
 # /bin/zsh $BASEDIR/local_extract_filelevel.sh $DATASET_PATH $OUTFILE
 
 # TRANSLATE METADATA TO CATALOG SCHEMA

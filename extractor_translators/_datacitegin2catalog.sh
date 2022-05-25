@@ -28,13 +28,13 @@ url="[]"
 # license
 license=$(jq '.license | { "name": .name, "url": .url}' <<< $EXTRACTED)
 # authors
-authors=$(jq '[.authors[]? | {"name":"", "givenName":.firstname, "familyName":.lastname, "email":"", "honorificSuffix":"", "identifiers":[.id]} ]' <<< $EXTRACTED)
+authors=$(jq '[.authors[]? | {"name":"", "givenName":.firstname, "familyName":.lastname, "email":"", "honorificSuffix":""} + if has("id") then {"identifiers":[ {"type":(.id | tostring | split(":") | .[0]), "identifier":(.id | tostring | split(":") | .[1])}]} else null end]' <<< $EXTRACTED)
 # keywords
 keywords=$(jq '.keywords' <<< $EXTRACTED)
 # funding
 funding=$(jq '[.funding[]? as $element | {"name": $element, "identifier": "", "description": ""}]' <<< $EXTRACTED)
 # publications
-publications=$(jq '[.references[]? as $pubin | {"type":"", "title":$pubin["citation"], "doi":($pubin["id"] | sub("^doi:"; "https://www.doi.org/")), "datePublished":"", "publicationOutlet":"", "authors": []}]'<<< $EXTRACTED)
+publications=$(jq '[.references[]? as $pubin | {"type":"", "title":$pubin["citation"], "doi":($pubin["id"] | sub("DOI:"; "https://www.doi.org/")), "datePublished":"", "publicationOutlet":"", "authors": []}]'<<< $EXTRACTED)
 # subdatasets
 subdatasets="[]"
 # children

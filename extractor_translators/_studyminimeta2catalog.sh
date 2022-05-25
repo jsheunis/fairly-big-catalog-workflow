@@ -33,10 +33,17 @@ authors=$(echo "$combinedpersonsids" | jq '. as $parent | [.authorids[]["@id"] a
 # keywords
 keywords=$(jq '.[] | select(.["@type"] == "Dataset") | .keywords' <<< $GRAPH)
 # funding
-funding=$(jq '.[] | select(.["@type"] == "Dataset") | [.funder[] | {"name": .name, "identifier": "", "description": ""}]' <<< $GRAPH)
+funding=$(jq '.[] | select(.["@type"] == "Dataset") | [.funder[]? | {"name": .name, "identifier": "", "description": ""}]' <<< $GRAPH)
+if [[ ${funding} == "null" ]] ||  [ -z "$funding" ] || [[ ${funding} == "[]" ]]; then
+    funding="[]"
+fi
+
 # publications
 combinedpersonspubs=$(jq '{"authordetails": .[] | select(.["@id"] == "#personList") | .["@list"], "publications": .[] | select(.["@id"] == "#publicationList") | .["@list"]}' <<< $GRAPH)
 publications=$(echo "$combinedpersonspubs" | jq '. as $parent | [.publications[] as $pubin | {"type":$pubin["@type"], "title":$pubin["headline"], "doi":$pubin["sameAs"], "datePublished":$pubin["datePublished"], "publicationOutlet":$pubin["publication"]["name"], "authors": ([$pubin.author[]["@id"] as $idin | ($parent.authordetails[] | select(.["@id"] == $idin))])}]')
+if [[ ${publications} == "null" ]] ||  [ -z "$publications" ] || [[ ${publications} == "[]" ]]; then
+    publications="[]"
+fi
 # subdatasets
 subdatasets="[]"
 # children

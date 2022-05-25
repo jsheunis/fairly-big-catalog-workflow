@@ -80,7 +80,7 @@ else
     contentbytesize=$(jq '.extracted_metadata["contentbytesize"]'<<< $METADATA)
     # url
     url=$(jq '.extracted_metadata.distribution.url'<<< $METADATA)
-    if [ -z "$url" ]; then
+    if [[ ${url} == "null" ]] ||  [ -z "$url" ]; then
         url="[]"
     fi
     # ADD EXTRACTED PROPERTIES TO A SINGLE OUTPUT OBJECT, WRITE TO FILE
@@ -90,6 +90,7 @@ else
     --argjson path "$ppath" \
     --argjson url "$url" \
     --argjson extractors_used $extractors_used \
+    --argjson contentbytesize $contentbytesize \
     '$ARGS.named'
     )
 fi
